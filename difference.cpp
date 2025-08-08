@@ -45,9 +45,18 @@ string formatter(string s, int i, queue<int>* qptr, bool file_tag){
 
 
 
-int main(){
+int main(int argcount, char* argv[]){
+
+     if(argcount != 3){
+        cout << "Usage: differentiate <file1> <file2>\n";
+        return 1;
+    }
+
+
+    string file1_address = argv[1];
+    string file2_address = argv[2];
     
-    fstream infile1 ("file1.txt");
+    fstream infile1 (file1_address);
     bool file_tag1 = false; //this helps us to identify which file we are currently formatting
     //error handling bhi kr hi lo
     if(!infile1.is_open()){
@@ -65,7 +74,7 @@ int main(){
 
     
     //do same for the 2nd file and then close both the files
-    fstream infile2 ("file2.txt");
+    fstream infile2 (file2_address);
     bool file_tag2 = true; //this helps us to identify which file we are currently formatting
     //error handling bhi kr hi lo
     if(!infile2.is_open()){
@@ -115,7 +124,7 @@ int main(){
     //pointer to this queue that we will pass to the formatter function
     queue<int>* qptr = &result;    
 
-    cout<<"\e[30;105m  DISPLAYING BOTH THE FILES TOGETHER \e[0m"<<"\n\n";
+    cout<<"\e[30;105m  DISPLAYING BOTH THE FILES : RED LINES INDICATE CHANGES IN 2nd AGAINST 1st \e[0m"<<"\n\n";
 
 
 
