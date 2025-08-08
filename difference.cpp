@@ -4,26 +4,42 @@
 #include<iostream>
 #include<vector>
 #include<iomanip>
+#include <boost/algorithm/string.hpp>
+#include<queue>
 using namespace std;
+using namespace boost::algorithm;
 
-string formatter(string s){
+string formatter(string s, int i, queue<int>* qptr, bool file_tag){
 
-    //this function will format the string s to be of fixed width 60
+       
     //we take the string input, then we see if it fits the width of 60 characters.
     //if it doesnt, we either trim it down or add spaces to the end of it.
-
+    
     int length = s.length();
     if(length>60){
         //we need to trim it down to 60 characters
         s = s.substr(0,60); //so extract substring of length 60 starting from index 0
-        return s;
+    
     }
 
     else if(length<60){
         //we will need to add spaces to its end
         s+= string(60 - length, ' ');
-        return s;
+
     }
+    
+    //this function will format the string s to be of fixed width 60 and color it if different
+    if(file_tag){
+        //means we are formatting file2
+        //firstly we check the top element of the queue
+        if(!qptr->empty() && qptr->front() == i){
+            //means this line is different, so we color it red
+            s = "\e[31m" + s + "\e[0m"; //red color escape sequence
+            qptr->pop(); //remove the top element from the queue
+        }
+
+    }
+      
     return s; //we return the string if its already of length 60
 }
 
@@ -32,6 +48,7 @@ string formatter(string s){
 int main(){
     
     fstream infile1 ("file1.txt");
+    bool file_tag1 = false; //this helps us to identify which file we are currently formatting
     //error handling bhi kr hi lo
     if(!infile1.is_open()){
         cout<<"The file file1.txt didnt open";
@@ -42,12 +59,14 @@ int main(){
     string temp="";
     while(!infile1.eof()){
         getline(infile1,temp);
+        trim(temp); //trim the string to remove leading and trailing spaces
         f1data.push_back(temp);
     }
 
     
     //do same for the 2nd file and then close both the files
     fstream infile2 ("file2.txt");
+    bool file_tag2 = true; //this helps us to identify which file we are currently formatting
     //error handling bhi kr hi lo
     if(!infile2.is_open()){
         cout<<"The file file2.txt didnt open";
@@ -58,6 +77,7 @@ int main(){
     temp="";
     while(!infile2.eof()){
         getline(infile2,temp);
+        trim(temp);
         f2data.push_back(temp);
     }
 
@@ -68,8 +88,7 @@ int main(){
         int diff = f1data.size()-f2data.size();
         for(int i=0;i<diff;i++){
             f2data.push_back("");
-            //now we also add newlines to bottom of file2.
-            infile2<<"\n";
+           
         }
     }
 
@@ -78,8 +97,6 @@ int main(){
         int diff = f2data.size()-f1data.size();
         for(int i=0;i<diff;i++){
             f1data.push_back("");
-            //now we also add newlines to bottom of file1.
-            infile1<<"\n";
         }
 
     }
@@ -89,17 +106,21 @@ int main(){
     infile2.close();
 
     //now I need to compare 2 files of same size
-    string result="";
-    for(int i=0;i<f2data.size();i++){
+    queue<int> result;
+    for(int i=0;i<f1data.size();i++){
         if(f1data[i]!=f2data[i]){
-            result+= "_" + to_string(i+1);
+            result.push(i); //store the index of the line that is different
         }
     }
-    cout<<result<<"\n";
+    //pointer to this queue that we will pass to the formatter function
+    queue<int>* qptr = &result;    
 
-    cout<<"DISPLAYING BOTH THE FILES TOGETHER\n\n";
+    cout<<"\e[30;105m  DISPLAYING BOTH THE FILES TOGETHER \e[0m"<<"\n\n";
+
+
+
     for(int i=0;i<f1data.size();i++){
-        cout<<formatter(f1data[i])<<" || "<<formatter(f2data[i])<<"\n";
+        cout<<formatter(f1data[i],i,qptr,file_tag1)<<" || "<<formatter(f2data[i],i,qptr,file_tag2)<<"\n";
     }
     
 
