@@ -55,6 +55,10 @@ int main(int argcount, char* argv[]){
 
     string file1_address = argv[1];
     string file2_address = argv[2];
+
+    
+    //now while reading the files, we need to skip empty lines and lines that are comments and lines 
+    //that are part of multiline comments.
     
     fstream infile1 (file1_address);
     bool file_tag1 = false; //this helps us to identify which file we are currently formatting
@@ -66,10 +70,15 @@ int main(int argcount, char* argv[]){
     
     vector<string>f1data;
     string temp="";
-    while(!infile1.eof()){
-        getline(infile1,temp);
+    while(getline(infile1,temp)){
+        
         trim(temp); //trim the string to remove leading and trailing spaces
-        f1data.push_back(temp);
+        if(!(temp.empty() || temp[0] == '#' || (temp[0] == '/' && temp[1] == '/'))) {
+            //skip empty lines and comment lines
+            f1data.push_back(temp); 
+            //we push back only if the line is not empty and not a comment
+        }
+        
     }
 
     
@@ -84,11 +93,16 @@ int main(int argcount, char* argv[]){
     
     vector<string>f2data;
     temp="";
-    while(!infile2.eof()){
-        getline(infile2,temp);
+    while(getline(infile2,temp)){
         trim(temp);
-        f2data.push_back(temp);
+        if(!(temp.empty() || temp[0] == '#' || (temp[0] == '/' && temp[1] == '/'))) {
+            //skip empty lines and comment lines
+            f2data.push_back(temp);
+        }
+        
+        
     }
+
 
     //now before comparing, we equate the number of elements in both vectors. IF either one is shorter, we add empty spaces to the bottom of the file as well as to the vector.
     if(f1data.size()>f2data.size()){
@@ -124,7 +138,7 @@ int main(int argcount, char* argv[]){
     //pointer to this queue that we will pass to the formatter function
     queue<int>* qptr = &result;    
 
-    cout<<"\e[30;105m  DISPLAYING BOTH THE FILES : RED LINES INDICATE CHANGES IN 2nd AGAINST 1st \e[0m"<<"\n\n";
+    cout<<"\e[30;105m  DISPLAYING BOTH THE FILES : RED LINES INDICATE CHANGES IN 2nd FILE AGAINST 1st \e[0m"<<"\n\n";
 
 
 
