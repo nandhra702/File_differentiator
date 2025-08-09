@@ -14,7 +14,7 @@ It skips irrelevant lines (empty lines, comments) and highlights actual differen
   - Multi-line comments (`/* ... */`)
 -  **Highlights changes in red** for quick identification.
 -  **Fast**: Written in C++ for high performance.
--  **Tested**: Includes RSpec tests for binary behavior.
+-  **Tested**: Includes RSpec tests for binary behavior. (testing binaries for failures)
 
 ---
 
@@ -42,6 +42,9 @@ differentiate {file1 address} {file2 address}
 Example
 > differentiate src/trial.cpp downloads/trial_new.cpp
 ```
+## Demo
+![Demo](MARKOUT_DEMO.gif)
+
 
 Thanks !
 
