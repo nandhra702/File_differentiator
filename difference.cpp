@@ -59,6 +59,7 @@ int main(int argcount, char* argv[]){
     
     //now while reading the files, we need to skip empty lines and lines that are comments and lines 
     //that are part of multiline comments.
+    bool in_multiline_comment = false; 
     
     fstream infile1 (file1_address);
     bool file_tag1 = false; //this helps us to identify which file we are currently formatting
@@ -70,18 +71,38 @@ int main(int argcount, char* argv[]){
     
     vector<string>f1data;
     string temp="";
-    while(getline(infile1,temp)){
-        
-        trim(temp); //trim the string to remove leading and trailing spaces
-        if(!(temp.empty() || temp[0] == '#' || (temp[0] == '/' && temp[1] == '/'))) {
-            //skip empty lines and comment lines
-            f1data.push_back(temp); 
-            //we push back only if the line is not empty and not a comment
+    while (getline(infile1, temp)) {
+    trim(temp); // remove spaces
+
+    // If we're already inside a /* ... */ block
+    if (in_multiline_comment) {
+        if (temp.find("*/") != string::npos) {
+            in_multiline_comment = false; // comment ends
         }
-        
+        continue; // skip the whole line
     }
 
+    // Skip empty lines
+    if (temp.empty()) continue;
+
+    // Skip single-line comments (# or //)
+    if (temp[0] == '#' || (temp.size() >= 2 && temp[0] == '/' && temp[1] == '/'))
+        continue;
+
+    // Check for start of multiline comment
+    if (temp.size() >= 2 && temp[0] == '/' && temp[1] == '*') {
+        if (temp.find("*/") == string::npos) {
+            // Only set the flag if it doesn't end on the same line
+            in_multiline_comment = true;
+        }
+        continue; // skip this line
+    }
+
+    // If none of the above matched, it's a valid code line
+    f1data.push_back(temp);
+}
     
+
     //do same for the 2nd file and then close both the files
     fstream infile2 (file2_address);
     bool file_tag2 = true; //this helps us to identify which file we are currently formatting
@@ -93,15 +114,36 @@ int main(int argcount, char* argv[]){
     
     vector<string>f2data;
     temp="";
-    while(getline(infile2,temp)){
-        trim(temp);
-        if(!(temp.empty() || temp[0] == '#' || (temp[0] == '/' && temp[1] == '/'))) {
-            //skip empty lines and comment lines
-            f2data.push_back(temp);
+    while (getline(infile2, temp)) {
+    trim(temp); // remove spaces
+
+    // If we're already inside a /* ... */ block
+    if (in_multiline_comment) {
+        if (temp.find("*/") != string::npos) {
+            in_multiline_comment = false; // comment ends
         }
-        
-        
+        continue; // skip the whole line
     }
+
+    // Skip empty lines
+    if (temp.empty()) continue;
+
+    // Skip single-line comments (# or //)
+    if (temp[0] == '#' || (temp.size() >= 2 && temp[0] == '/' && temp[1] == '/'))
+        continue;
+
+    // Check for start of multiline comment
+    if (temp.size() >= 2 && temp[0] == '/' && temp[1] == '*') {
+        if (temp.find("*/") == string::npos) {
+            // Only set the flag if it doesn't end on the same line
+            in_multiline_comment = true;
+        }
+        continue; // skip this line
+    }
+
+    // If none of the above matched, it's a valid code line
+    f2data.push_back(temp);
+}
 
 
     //now before comparing, we equate the number of elements in both vectors. IF either one is shorter, we add empty spaces to the bottom of the file as well as to the vector.
