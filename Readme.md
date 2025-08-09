@@ -1,5 +1,4 @@
 # MarkOut
-## **Tagline**  
 > *"Spot the changes that matter — skip the clutter."*  
 
 **MarkOut** is a lightweight, fast CLI tool that helps you **identify and highlight changes** between two files.  
