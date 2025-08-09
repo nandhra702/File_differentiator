@@ -65,7 +65,7 @@ int main(int argcount, char* argv[]){
     bool file_tag1 = false; //this helps us to identify which file we are currently formatting
     //error handling bhi kr hi lo
     if(!infile1.is_open()){
-        cout<<"The file file1.txt didnt open";
+        cout<<"The first file didnt open";
         return 1;
     }
     
@@ -108,7 +108,7 @@ int main(int argcount, char* argv[]){
     bool file_tag2 = true; //this helps us to identify which file we are currently formatting
     //error handling bhi kr hi lo
     if(!infile2.is_open()){
-        cout<<"The file file2.txt didnt open";
+        cout<<"The second file didnt open";
         return 1;
     }
     
