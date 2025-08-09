@@ -22,7 +22,7 @@ It skips irrelevant lines (empty lines, comments) and highlights actual differen
 
 ```bash
 # Clone the repository
-git clone https://github.com/yourusername/MarkOut.git
+git clone https://github.com/nandhra702/MarkOut.git
 
 # Go into the directory
 cd MarkOut
